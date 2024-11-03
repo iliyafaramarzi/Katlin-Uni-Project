@@ -52,13 +52,16 @@ class MainActivity : ComponentActivity() {
                 mutableStateListOf<String>()
             }
 
-            val myNum = remember {
+            var myNum = remember {
                 Random.nextInt(0, 10)
             }
 
             val stat = remember {
                 mutableStateOf("")
+            }
 
+            val winGameStat = remember {
+                mutableStateOf("Try It!")
             }
 
             MyApplicationTheme {
@@ -78,22 +81,29 @@ class MainActivity : ComponentActivity() {
 
                     Button(onClick = {
                         println(myNum)
-                        if (guesedNumber.value.toIntOrNull() != null){
+                        if (guesedNumber.value.toIntOrNull() != null && winGameStat.value != "Win!"){
                             if(guesedNumber.value.toInt() > myNum){
                                 stat.value = "bigger"
-
+                                test.value = guesedNumber.value
+                                history.reverse()
+                                history.add(guesedNumber.value)
+                                history.reverse()
+                                guesedNumber.value = ""
                             }
                             else if (guesedNumber.value.toInt() < myNum){
                                 stat.value = "smaller"
+                                test.value = guesedNumber.value
+                                history.reverse()
+                                history.add(guesedNumber.value)
+                                history.reverse()
+                                guesedNumber.value = ""
                             }
                             else{
-                                stat.value = "Trueee"
+                                guesedNumber.value = ""
+                                history.clear()
+                                test.value = ""
+                                winGameStat.value = "Win!"
                             }
-                            test.value = guesedNumber.value
-                            history.reverse()
-                            history.add(guesedNumber.value)
-                            history.reverse()
-                            guesedNumber.value = ""
                         }
                         else{
                             guesedNumber.value = ""
@@ -104,13 +114,15 @@ class MainActivity : ComponentActivity() {
                                      }, modifier = Modifier
                         .padding(top = 30.dp)
                         .width(300.dp)) {
-                        Text(text = "Try It!")
+                        Text(text = winGameStat.value)
                     }
 
                     Button(onClick = {
                          guesedNumber.value = ""
                          history.clear()
-                         test.value = ""}, modifier = Modifier
+                         test.value = ""
+                        myNum = Random.nextInt(0,10)
+                        winGameStat.value = "Try It!"}, modifier = Modifier
                         .padding(top = 20.dp)
                         .width(300.dp)) {
                         Text(text = "Reset")
